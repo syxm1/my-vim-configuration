@@ -9,7 +9,6 @@ Plugin 'honza/vim-snippets'
 call vundle#end()            
 
 set nocompatible
-set cursorline
 set number
 set tabstop=4
 set shiftwidth=4
@@ -63,9 +62,12 @@ inoremap <A-k> <Esc>:m .-2<CR>==gi
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
+" Exit terminal using Esc
+tnoremap <Esc> <C-\><C-n>:q!<CR>
+
 " Number-toggle
 augroup numbertoggle
-    autocmd!
-    autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-    autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
 augroup END
