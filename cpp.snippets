@@ -1,4 +1,4 @@
-snippet cpshort 
+snippet cp 
 /**************************
 * syxm1
 * created: `!v strftime("%Y-%m-%d %H:%M")` 
@@ -30,6 +30,35 @@ signed main() {
 		test_case();
 	}
 }
+endsnippet
+
+snippet cp2
+/**************************
+* syxm1
+* created: `!v strftime("%Y-%m-%d %H:%M")` 
+**************************/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+void test_case() {
+	$0
+}
+
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	
+	int tc = 1;
+	// cin >> tc;
+
+	while (tc--) {
+		test_case();
+	}
+}
+
 endsnippet
 
 snippet modexp 
@@ -82,7 +111,7 @@ endsnippet
 
 snippet sparse
 vector<int> lg(mxN);
-void get_log() {
+void get_log() { // run this on main function to pre-compute log
 	lg[1] = 0;
 	for (int i = 2; i < mxN; i++) {
 		lg[i] = lg[i/2] + 1;
@@ -122,4 +151,237 @@ template<typename T> struct sparse {
 };
 endsnippet
 
-# vim:ft=snippets:
+snippet fenwick
+template<typename> struct fenwick {
+	int sz;
+	vector<T> fen, arr;
+
+	fenwick(int n) {
+		this->sz = n+1;
+		fen.resize(sz, 0);
+		arr.resize(sz, 0);
+	}
+
+	fenwick(vector<T> &v) : fenwick(v.size()) {
+		for (int i = 0; i < v.size(); i++) {
+			upd(i, v[i]);
+		}
+	}
+
+	void add(int i, T x) {
+		i++;
+		arr[i] += x;
+		while (i < sz) {
+			fen[i] += x;
+			i += (i & (-i));
+		}
+	}
+
+	void upd(int i, T x) {
+		add(i, x - arr[i+1]);
+	}
+
+	T pref(int r) {
+		r++;
+		T ret = 0;
+		while (r > 0) {
+			ret += fen[r];
+			r -= (r & (-r));
+		}
+		return ret;
+	}
+
+	T sum(int l, int r) {
+		return pref(r) - pref(l-1);
+	}
+}
+endsnippet
+
+snippet fenwick2d 
+template<typename> struct fenwick {
+	int n, m;
+	vector<vector<T>> fen, arr;
+
+	fenwick(int _n, int _m) {
+		this->n = _n+1;
+		this->m = _m+1;
+		fen.assign(n, vector<T>(m, 0));
+		arr.assign(n, vector<T>(m, 0));
+	}
+
+	fenwick(vector<vector<T>> &v) : fenwick(v.size(), v[0].size()) {
+		for (int i = 0; i < v.size(); i++) {
+			for (int j = 0; j < v[0].size(); j++) {
+				upd(i, j, v[i][j]);
+			}
+		}
+	}
+
+	void add(int x, int y, T d) {
+		x++, y++;
+		arr[x][y] += d;
+		for (i = x; i < n; i += (i & (-i))) 
+			for (int j = y; j < m; j += (j & (-j))) 
+				fen[i][j] += d;
+	}
+
+	void upd(int x, int y, T v) {
+		add(x, y, v - arr[x+1][y+1]);
+	}
+
+	T pref(int x, int y) {
+		x++, y++;
+		T ret = 0;
+		for (int i = x; i > 0; i -= (i & (-i)))
+			for (int j = y; j > 0; j -= (j & (-j)))
+				ret += fen[i][j];
+		return ret;
+	}
+}
+endsnippet
+
+snippet segtree_purq
+template<typename T> struct segtree {
+	int n;
+	vector<T> tree;
+
+	segtree(int sz) {
+		this->n = sz;
+		tree.resize(4 * sz + 5);
+	}
+
+	segtree(vector<T> &v) : segtree((int) v.size()) {
+		build(0, 0, (int) v.size() - 1, v);
+	}
+
+	T combine(T a, T b) {
+		return $0; // combining function
+	}
+
+	void build(int node, int tl, int tr, vector<T> &v) {
+		if (tl == tr) {
+			tree[node] = v[tl];
+		} else {
+			int tm = (tl + tr) >> 1;
+			build(2 * node + 1, tl, tm, v);
+			build(2 * node + 2, tm + 1, tr, v);
+			tree[v] = combine(tree[2 * node + 1], tree[2 * node + 2]);
+		}
+	}
+
+	void upd(int node, int tl, int tr, int id, T val) {
+		if (tl == tr) {
+			tree[node] = tree[tl];
+		} else {
+			int tm = (tl + tr) >> 1;
+			if (id <= tm) upd(2 * node + 1, tl, tm, id, val);
+			else upd(2 * node + 2, tm + 1, tr, id, val);
+			tree[node] = combine(tree[2 * node + 1], tree[2 * node + 2]);
+		}
+	}
+
+	T get(int node, int tl, int tr, int l, int r) {
+		if (tl > r || tr < l) {
+			return $1; // identity
+		} else if (tl >= l && tr < r) {
+			return tree[node];
+		} else {
+			int tm = (tl + tr) >> 1;
+			return combine(get(2 * node + 1, tl, tm, l, r), 
+						get(2 * node + 2, tm + 1, tr, l, r));
+		}
+	}
+
+	void build(vector<int> &v) {
+		build(0, 0, (int) v.size() - 1, v);
+	}
+
+	void upd(int id, T val) {
+		upd(0, 0, n-1, id, val);
+	}
+
+	T get(int l, int r) {
+		return get(0, 0, n-1, l, r);
+	}
+};
+endsnippet
+
+snippet pbds
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+template<typename T> using ordered_set =
+	tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+template<typename T> using ordered_multiset =
+	tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+template<typename T> using decreasing_ordered_set =
+	tree<T, null_type, greater<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+template<typename T> using decreasing_ordered_multiset =
+	tree<T, null_type, greater_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
+	
+// order_of_key(x)
+// find_by_order(x)
+endsnippet
+
+snippet convexhull
+struct pt {
+	double x, y;
+};
+
+int orientation(pt a, pt b, pt c) {
+	double v = a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y);
+	if (v < 0) return -1; // clockwise
+	if (v > 0) return +1; // counter-clockwise
+	return 0;
+}
+
+bool cw(pt a, pt b, pt c, bool include_collinear) {
+	int o = orientation(a, b, c);
+	return o < 0 || (include_collinear && o == 0);
+}
+bool ccw(pt a, pt b, pt c, bool include_collinear) {
+	int o = orientation(a, b, c);
+	return o > 0 || (include_collinear && o == 0);
+}
+
+void convex_hull(vector<pt>& a, bool include_collinear = false) {
+	if (a.size() == 1)
+		return;
+
+	sort(a.begin(), a.end(), [](pt a, pt b) {
+		return make_pair(a.x, a.y) < make_pair(b.x, b.y);
+	});
+	pt p1 = a[0], p2 = a.back();
+	vector<pt> up, down;
+	up.push_back(p1);
+	down.push_back(p1);
+	for (int i = 1; i < (int)a.size(); i++) {
+		if (i == a.size() - 1 || cw(p1, a[i], p2, include_collinear)) {
+			while (up.size() >= 2 && !cw(up[up.size()-2], up[up.size()-1], a[i], include_collinear))
+				up.pop_back();
+			up.push_back(a[i]);
+		}
+		if (i == a.size() - 1 || ccw(p1, a[i], p2, include_collinear)) {
+			while (down.size() >= 2 && !ccw(down[down.size()-2], down[down.size()-1], a[i], include_collinear))
+				down.pop_back();
+			down.push_back(a[i]);
+		}
+	}
+
+	if (include_collinear && up.size() == a.size()) {
+		reverse(a.begin(), a.end());
+		return;
+	}
+	a.clear();
+	for (int i = 0; i < (int)up.size(); i++)
+		a.push_back(up[i]);
+	for (int i = down.size() - 2; i > 0; i--)
+		a.push_back(down[i]);
+}
+endsnippet
+
+#
