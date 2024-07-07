@@ -15,7 +15,7 @@ Plugin 'lervag/vimtex'
 Plugin 'ycm-core/YouCompleteMe'
 call vundle#end()  
 
-let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="<CR>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
