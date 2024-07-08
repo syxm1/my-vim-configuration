@@ -40,7 +40,7 @@ set noswapfile
 
 " tab
 set noexpandtab   " Default
-set tabstop=N
+set tabstop=4
 set shiftwidth=0  " Use value of tabstop
 set softtabstop=0 " Default
 set smarttab      " Optional
@@ -67,7 +67,7 @@ vnoremap <A-k> :m '<-2<CR>gv=gv
 
 " number - relative number
 augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+    autocmd!
+    autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+    autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
 augroup END
