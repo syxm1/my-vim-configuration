@@ -15,16 +15,19 @@ Plugin 'lervag/vimtex'
 Plugin 'ycm-core/YouCompleteMe'
 call vundle#end()  
 
+" ultisnips
 let g:UltiSnipsExpandTrigger="<CR>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 let g:UltiSnipsEditSplit="vertical"
 
+" lightline
 set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'deus',
       \ }
 
+" cursor
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 let &t_SR = "\e[4 q"
@@ -32,18 +35,20 @@ let &t_ER = "\e[4 q"
 
 set nu
 
-set nowrap
 set nobackup
 set noswapfile
-set noshowmode
 
-set tabstop=4
-set shiftwidth=4
-set expandtab
+" tab
+set noexpandtab   " Default
+set tabstop=N
+set shiftwidth=0  " Use value of tabstop
+set softtabstop=0 " Default
+set smarttab      " Optional
+
+" ui
+set nowrap
+set noshowmode
 set showmatch
-set smarttab
-set autoindent
-set copyindent
 set hlsearch
 
 set encoding=utf-8
